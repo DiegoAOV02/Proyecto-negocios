@@ -149,6 +149,55 @@
             android:textSize="18sp" />
     </LinearLayout>
 
+    <!-- Layout de flujo de dinero -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dinero Recibido:"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:textSize="18sp"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="$0.00"
+            android:inputType="numberDecimal"
+            android:id="@+id/editDineroRecibido"
+            android:gravity="end"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <!-- Cambio -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cambio:"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$0.00"
+            android:id="@+id/txtCambio"
+            android:textSize="18sp"
+            />
+    </LinearLayout>
+
     <!-- Botones Volver y Vender -->
     <LinearLayout
         android:layout_width="match_parent"

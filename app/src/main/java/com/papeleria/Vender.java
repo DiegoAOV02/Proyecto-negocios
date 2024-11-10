@@ -27,11 +27,12 @@ import java.util.Locale;
 public class Vender extends Activity {
 
     private Button btnAgregarProducto, btnSeleccionarFecha, btnVender, btnVolver;
-    private TextView txtFechaSeleccionada, txtIva, txtTotalFinal;
+    private TextView txtFechaSeleccionada, txtIva, txtCambio, txtTotalFinal;
     private TableLayout tablaProductosVendidos;
     private AutoCompleteTextView editBuscarProducto;
     private Calendar fechaSeleccionada;
     private double subtotal = 0.0;
+    private EditText editDineroRecibido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,8 @@ public class Vender extends Activity {
         tablaProductosVendidos = findViewById(R.id.tablaProductosVendidos);
         btnVolver = findViewById(R.id.btnVolver);
         btnVender = findViewById(R.id.btnVender);
+        txtCambio = findViewById(R.id.txtCambio);
+        editDineroRecibido = findViewById(R.id.editDineroRecibido);
 
         fechaSeleccionada = Calendar.getInstance();
 
@@ -58,13 +61,44 @@ public class Vender extends Activity {
 
         btnVolver.setOnClickListener(v -> finish());
 
+        btnVender.setEnabled(false);
+
+        editDineroRecibido.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Calcular cambio cada vez que se modifica el dinero recibido
+                calcularCambio();
+            }
+        });
+
         btnVender.setOnClickListener(v -> {
             if (tablaProductosVendidos.getChildCount() > 1) {
-                registrarVenta(); // Guardar venta en JSON
+                double totalFinal = Double.parseDouble(txtTotalFinal.getText().toString().replace("$", "").replace(",", ""));
+                double dineroRecibido;
+
+                try {
+                    dineroRecibido = Double.parseDouble(editDineroRecibido.getText().toString());
+                } catch (NumberFormatException e) {
+                    Toast.makeText(Vender.this, "Por favor, ingrese un monto válido de dinero recibido", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (dineroRecibido >= totalFinal) {
+                    registrarVenta(); // Guardar venta en JSON
+                } else {
+                    Toast.makeText(Vender.this, "El dinero recibido es insuficiente", Toast.LENGTH_SHORT).show();
+                }
             } else {
                 Toast.makeText(Vender.this, "No hay productos para vender", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         btnAgregarProducto.setOnClickListener(v -> agregarProducto());
     }
@@ -170,13 +204,26 @@ public class Vender extends Activity {
             return;
         }
 
-        double totalFinal = Double.parseDouble(txtTotalFinal.getText().toString().replace("$", "").replace(",", ""));
+        double totalFinal;
+        double dineroRecibido;
+        double cambio;
 
-        // Crear un objeto JSON para la venta
-        JSONObject venta = new JSONObject();
         try {
+            // Obtener el total de la venta
+            totalFinal = Double.parseDouble(txtTotalFinal.getText().toString().replace("$", "").replace(",", ""));
+
+            // Obtener el dinero recibido ingresado por el usuario
+            dineroRecibido = Double.parseDouble(editDineroRecibido.getText().toString());
+
+            // Calcular el cambio
+            cambio = dineroRecibido - totalFinal;
+
+            // Crear un objeto JSON para la venta
+            JSONObject venta = new JSONObject();
             venta.put("fecha", fecha);
             venta.put("total", totalFinal);
+            venta.put("dineroRecibido", dineroRecibido);
+            venta.put("cambio", cambio);
 
             JSONArray productosVendidos = new JSONArray();
             for (int i = 1; i < tablaProductosVendidos.getChildCount(); i++) {
@@ -202,10 +249,14 @@ public class Vender extends Activity {
 
             Toast.makeText(this, "Venta registrada exitosamente", Toast.LENGTH_SHORT).show();
             finish();  // Cerrar la actividad
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Error en los valores de dinero recibido o total", Toast.LENGTH_SHORT).show();
         } catch (JSONException e) {
             e.printStackTrace();
+            Toast.makeText(this, "Error al registrar la venta", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void actualizarTotal() {
         subtotal = 0.0;
@@ -223,15 +274,6 @@ public class Vender extends Activity {
         txtTotalFinal.setText(String.format(Locale.getDefault(), "$%.2f", totalFinal));
     }
 
-    // Métodos auxiliares para obtener productos de una base de datos simulada
-    private ArrayList<String> obtenerNombresProductos() {
-        // Simula la obtención de productos, aquí puedes conectarlo con JSON si lo necesitas
-        ArrayList<String> productos = new ArrayList<>();
-        productos.add("Producto A");
-        productos.add("Producto B");
-        return productos;
-    }
-
     private double obtenerPrecioProducto(String nombre) {
         JSONArray productosJsonArray = JsonHelper.cargarProductos(this);
         for (int i = 0; i < productosJsonArray.length(); i++) {
@@ -245,5 +287,38 @@ public class Vender extends Activity {
             }
         }
         return 0.0; // Retorna 0 si no encuentra el producto
+    }
+
+    // Método para recepción de dinero y cálculo de cambio
+    private void calcularCambio() {
+        try {
+            // Obtener el dinero recibido ingresado por el usuario
+            double dineroRecibido = Double.parseDouble(editDineroRecibido.getText().toString());
+
+            // Obtener el total final de la venta
+            double totalFinal = Double.parseDouble(txtTotalFinal.getText().toString().replace("$", "").replace(",", ""));
+
+            // Calcular el cambio
+            double cambio = dineroRecibido - totalFinal;
+
+            // Verificar si el cambio es negativo
+            if (cambio < 0) {
+                // Cambio en negativo, mostrar en rojo y deshabilitar el botón de vender
+                txtCambio.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                txtCambio.setText(String.format(Locale.getDefault(), "$%.2f", cambio));
+                btnVender.setEnabled(false);
+                Toast.makeText(this, "Hace falta dinero para completar la venta", Toast.LENGTH_SHORT).show();
+            } else {
+                // Cambio en positivo, mostrar en color normal y habilitar el botón de vender
+                txtCambio.setTextColor(getResources().getColor(android.R.color.holo_green_light));
+                txtCambio.setText(String.format(Locale.getDefault(), "$%.2f", cambio));
+                btnVender.setEnabled(true);
+            }
+        } catch (NumberFormatException e) {
+            // Manejar el caso en que el usuario no ingrese un valor válido
+            txtCambio.setText("$0.00");
+            txtCambio.setTextColor(getResources().getColor(android.R.color.black));
+            btnVender.setEnabled(false);
+        }
     }
 }

@@ -25,6 +25,7 @@
         </activity>
         <activity android:name=".Inventario"></activity>
         <activity android:name=".Vender"></activity>
+        <activity android:name=".VerVentas"></activity>
     </application>
 
 </manifest>

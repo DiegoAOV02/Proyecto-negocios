@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
          * Botones que dirigen a una nueva actividad.
          */
 
-        // Botón que dirige a la actividad de "Ver Ventas".
+        // Botón que dirige a la actividad de "Inventario".
         BT1 = findViewById(R.id.btn_vender);
         BT1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Botón que dirige a la actividad de "Inventario".
+        // Botón que dirige a la actividad de "Vender".
         BT2 = findViewById(R.id.btn_ver_inventario);
         BT2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Botón que dirige a la actividad de "Vender".
+        // Botón que dirige a la actividad de "Ver Ventas".
         BT3 = findViewById(R.id.btn_ventas);
         BT3.setOnClickListener(new View.OnClickListener() {
             @Override

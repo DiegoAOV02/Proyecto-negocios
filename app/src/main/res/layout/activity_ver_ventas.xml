@@ -16,15 +16,11 @@
         android:background="#6A4A86"
         android:gravity="center"
         android:padding="16dp"
-        android:text="Papelería Nuño"
+        android:text="Papelería los Inges"
         android:textColor="@android:color/white"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="24sp" />
 
     <!-- Botones y fecha actual -->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,11 +34,18 @@
             android:text="Día" />
 
         <Button
-            android:id="@+id/btnImprimir"
+            android:id="@+id/btnSemana"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Guardar PDF" />
+            android:text="Semana" />
+
+        <Button
+            android:id="@+id/btnMes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Mes" />
 
         <TextView
             android:id="@+id/txtFechaActual"
@@ -52,30 +55,81 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <!-- ScrollView para hacer el contenido desplazable -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-        <TextView
-            android:id="@+id/txtVentasPorFecha"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Aquí se mostrarán las ventas"
-            android:textSize="16sp"
-            android:padding="16dp" />
-    </LinearLayout>
+            android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal" >
-        <TextView
-            android:id="@+id/txtPrueba"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Todas las ventas realizadas"
-            android:textSize="16sp"
-            android:padding="16dp" />
-    </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ventas por día"
+                android:textSize="16dp"
+                android:padding="16dp"
+                android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/txtVentasPorFecha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Aquí se mostrarán las ventas"
+                android:textSize="16sp"
+                android:padding="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ventas por Semana"
+                android:textSize="16dp"
+                android:padding="16dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtSemana"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Todas las ventas realizadas en la semana"
+                android:textSize="16sp"
+                android:padding="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ventas por Mes"
+                android:textSize="16dp"
+                android:padding="16dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtMes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Todas las ventas realizadas en el mes"
+                android:textSize="16sp"
+                android:padding="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Artículo más vendido del mes"
+                android:textSize="16dp"
+                android:padding="16dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtArticuloMasVendidoDelMes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Aquí se muestran los artículos más vendidos del mes"
+                android:textSize="16dp"
+                android:padding="16dp" />
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

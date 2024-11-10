@@ -15,7 +15,7 @@
         android:background="#6A4A86"
         android:gravity="center"
         android:padding="16dp"
-        android:text="Papelería Nuño"
+        android:text="Papeleria los Inges"
         android:textColor="@android:color/white"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
