@@ -20,10 +20,7 @@
         android:textStyle="bold"
         android:text="Papeleria los Inges"
         android:textColor="@android:color/black"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="24sp" />
 
     <!-- Botones y fecha actual -->
     <LinearLayout
@@ -75,6 +72,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Mes"
+            android:backgroundTint="@color/celeste"
+            android:textColor="@android:color/black"/>
+
+        <Button
+            android:id="@+id/btnReport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Reporte"
             android:backgroundTint="@color/celeste"
             android:textColor="@android:color/black"/>
 

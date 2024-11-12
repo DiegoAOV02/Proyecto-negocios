@@ -2,10 +2,19 @@ package com.papeleria;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -14,7 +23,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -22,8 +36,14 @@ import java.util.Map;
 
 public class VerVentas extends Activity {
     TextView txtFechaActual, txtVentasPorFecha, txtSemana, txtMes, txtArticuloMasVendidoDelMes;
-    Button btnDia, btnSemana, btnMes;
+    Button btnDia, btnSemana, btnMes, btnReport;
     Calendar calendar;
+    float yPosition = 25f;
+
+    Canvas canvas;
+    PdfDocument pdfDocument;
+    PdfDocument.Page page;
+    String finalesDia = "", finalesSemana = "", finalesMes = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +64,12 @@ public class VerVentas extends Activity {
         btnDia = findViewById(R.id.btnDia);
         btnSemana = findViewById(R.id.btnSemana);
         btnMes = findViewById(R.id.btnMes);
+        btnReport = findViewById(R.id.btnReport);
 
         calendar = Calendar.getInstance();
 
         // Llamar al método para mostrar las ventas al iniciar la actividad
-        mostrarVentas();
+        //mostrarVentas();
 
         // Botón para llamar las ventas efectuadas en un día
         btnDia.setOnClickListener(v -> abrirCalendario());
@@ -58,8 +79,142 @@ public class VerVentas extends Activity {
 
         // Botón para mostrar ventas del mes
         btnMes.setOnClickListener(v -> mostrarVentasPorMes());
+
+        btnReport.setOnClickListener(v -> crearPDF());
     }
 
+    private void iniciarNuevaPagina() {
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pdfDocument.getPages().size() + 1).create();
+        page = pdfDocument.startPage(pageInfo);
+        canvas = page.getCanvas();
+        yPosition = 25f;
+    }
+
+    private void nuevaPaginaSiNecesaria() {
+        if (yPosition >= 845 - 50) { // Espacio de margen
+            pdfDocument.finishPage(page);
+            iniciarNuevaPagina();
+        }
+    }
+
+    private void putText(String txt, float marginLeft, float locationY) {
+        if (canvas == null) {
+            return;
+        }
+        nuevaPaginaSiNecesaria();
+
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(12);
+        paint.setAntiAlias(true);
+        canvas.drawText(txt, marginLeft, locationY, paint);
+        yPosition += paint.getTextSize() + 15;
+    }
+
+    private void drawTable(@NonNull String[][] data, float startX, float startY, float cellWidth, float cellHeight) {
+        nuevaPaginaSiNecesaria();
+
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.STROKE); // Para dibujar líneas de la tabla
+        paint.setStrokeWidth(2);
+
+        Paint textPaint = new Paint();
+        textPaint.setColor(Color.BLACK);
+        textPaint.setTextSize(12);
+        textPaint.setAntiAlias(true);
+
+        // Dibuja filas y columnas
+        int rows = data.length;
+        int cols = data[0].length;
+
+        float y = startY;
+
+        for (int i = 0; i <= rows; i++) { // Dibujar líneas horizontales
+            canvas.drawLine(startX, y, startX + cellWidth * cols, y, paint);
+            y += cellHeight;
+        }
+
+        float x = startX;
+        for (int i = 0; i <= cols; i++) { // Dibujar líneas verticales
+            canvas.drawLine(x, startY, x, startY + cellHeight * rows, paint);
+            x += cellWidth;
+        }
+
+        // Dibuja el texto en cada celda
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                String text = data[row][col];
+                float textX = startX + col * cellWidth + 10; // Margen para el texto dentro de la celda
+                float textY = startY + row * cellHeight + cellHeight / 2 + textPaint.getTextSize() / 2;
+                canvas.drawText(text, textX, textY, textPaint);
+            }
+        }
+        yPosition += (cellHeight * rows) + 20;
+    }
+
+
+    private void crearPDF() {
+        // Crear el documento PDF
+        pdfDocument = new PdfDocument();
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create(); // Tamaño A4 en puntos
+        page = pdfDocument.startPage(pageInfo);
+        canvas = page.getCanvas();
+
+        // Configuración del título
+        Paint titlePaint = new Paint();
+        titlePaint.setColor(Color.BLACK);
+        titlePaint.setTextSize(20);
+        titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        titlePaint.setAntiAlias(true);
+
+        Paint subtitlePaint = new Paint();
+        subtitlePaint.setColor(Color.BLACK);
+        subtitlePaint.setTextSize(15);
+        subtitlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        subtitlePaint.setAntiAlias(true);
+
+        // Posiciones y configuraciones
+        float marginLeft = 10f;
+        float maxWidth = 575f;
+
+        // Dibujar el título
+        canvas.drawText("Reporte de productos vendidos", marginLeft, yPosition, titlePaint);
+        yPosition += titlePaint.getTextSize() + 20; // Incrementar según el tamaño del título
+
+        canvas.drawText("Ventas del dia:", marginLeft, yPosition, subtitlePaint);
+        yPosition += subtitlePaint.getTextSize() + 20; // Incrementar según el tamaño del título
+        mostrarVentas();
+
+        canvas.drawText("Ventas de la semana:", marginLeft, yPosition, subtitlePaint);
+        yPosition += subtitlePaint.getTextSize() + 20; // Incrementar según el tamaño del título
+        mostrarVentasPorSemana();
+
+        canvas.drawText("Ventas del mes:", marginLeft, yPosition, subtitlePaint);
+        yPosition += subtitlePaint.getTextSize() + 20; // Incrementar según el tamaño del título
+        mostrarVentasPorMes();
+
+        pdfDocument.finishPage(page);
+
+        yPosition = 25f;
+
+        // Guardar el PDF en la carpeta de Descargas/PDFs
+        String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/PDFs";
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            directory.mkdirs(); // Crear directorio si no existe
+        }
+        String filePath = directoryPath + "/reporte_productos_vendidos.pdf";
+        try (OutputStream outputStream = new FileOutputStream(filePath)) {
+            pdfDocument.writeTo(outputStream);
+            //Toast.makeText(this, "PDF generado en: " + filePath, Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            Toast.makeText(this, "Error al generar PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.i("debugiando", e.getMessage());
+        } finally {
+            pdfDocument.close();
+        }
+    }
 
     // Abrir diálogo de calendario
     private void abrirCalendario() {
@@ -83,7 +238,8 @@ public class VerVentas extends Activity {
             txtFechaActual.setText(fechaSeleccionada);
 
             // Mostrar las ventas filtradas por la fecha seleccionada
-            mostrarVentas();
+
+
 
         }, year, month, day);
 
@@ -95,8 +251,16 @@ public class VerVentas extends Activity {
         // Leer las ventas guardadas en el archivo JSON
         JSONArray ventas = JsonHelper.cargarVentas(this);
 
+        LocalDateTime hoy = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            hoy = LocalDateTime.now();
+        }
+
         // Obtener la fecha seleccionada del TextView
-        String fechaSeleccionada = txtFechaActual.getText().toString();
+        String fechaSeleccionada = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            fechaSeleccionada = (!txtFechaActual.getText().toString().isEmpty()) ? txtFechaActual.getText().toString() : hoy.getDayOfMonth()+"/"+hoy.getMonthValue()+"/"+hoy.getYear();
+        }
 
         // Crear un StringBuilder para construir el texto formateado
         StringBuilder ventasFormateadas = new StringBuilder();
@@ -114,26 +278,31 @@ public class VerVentas extends Activity {
 
                 // Verificar si la fecha de la venta coincide con la fecha seleccionada
                 if (fecha.equals(fechaSeleccionada)) {
-                    // Formatear la información de la venta
-                    ventasFormateadas.append("Fecha: ").append(fecha).append("\n");
-                    ventasFormateadas.append("Total con IVA: $").append(total).append("\n");
-                    ventasFormateadas.append("Productos:\n");
+                    ventasFormateadas.append("Fecha: ").append(fecha).append("\n")
+                            .append("Total con IVA: $").append(total).append("\n")
+                            .append("Productos:\n");
 
-                    // Recorrer el array de productos
+                    putText( "Fecha: " + fecha, 10f, yPosition);
+                    putText( "Total con IVA: $" + total, 10f, yPosition);
+                    putText( "Productos:", 10f, yPosition);
+
+                    String[][] data = new String[productos.length() + 1][3];
+                    data[0][0] = "Nombre"; data[0][1] = "Cantidad"; data[0][2] = "Precio";
+
                     for (int j = 0; j < productos.length(); j++) {
                         JSONObject producto = productos.getJSONObject(j);
-                        String nombre = producto.getString("nombre");
-                        int cantidad = producto.getInt("cantidad");
-                        double precio = producto.getDouble("precio");
+                        data[j+1][0] = producto.getString("nombre");
+                        data[j+1][1] = String.valueOf(producto.getInt("cantidad"));
+                        data[j+1][2] = String.valueOf(producto.getDouble("precio"));
 
-                        // Agregar información del producto al formato
-                        ventasFormateadas.append("  - Nombre: ").append(nombre)
-                                .append(", Cantidad: ").append(cantidad)
-                                .append(", Precio: $").append(precio).append("\n");
+                        ventasFormateadas.append("  - Nombre: ").append(data[j+1][0])
+                                .append(", Cantidad: ").append(data[j+1][1])
+                                .append(", Precio: $").append(data[j+1][2]).append("\n");
                     }
 
-                    // Separador entre ventas
-                    ventasFormateadas.append("\n----------------------\n");
+                    drawTable( data, 10f, yPosition, 120f, 20f);
+                    //yPosition += 20f * (productos.length() + 1);  // Incrementa después de la tabla
+
                 }
 
             } catch (JSONException e) {
@@ -144,10 +313,12 @@ public class VerVentas extends Activity {
         // Si no hay ventas en la fecha seleccionada
         if (ventasFormateadas.length() == 0) {
             ventasFormateadas.append("No hay ventas para la fecha seleccionada.");
+            putText( "No hay ventas para la fecha seleccionada.", 10f, yPosition);
         }
 
         // Mostrar las ventas formateadas en el TextView
         txtVentasPorFecha.setText(ventasFormateadas.toString());
+
     }
 
     // Mostrar ventas de la semana en la que cae la fecha seleccionada
@@ -180,6 +351,7 @@ public class VerVentas extends Activity {
                 if (semanaVenta == semanaSeleccionada) {
                     // Formatear la información de la venta
                     formatearVenta(venta, ventasFormateadas);
+
                 }
 
             } catch (Exception e) {
@@ -190,6 +362,7 @@ public class VerVentas extends Activity {
         // Mostrar las ventas de la semana seleccionada en el TextView
         if (ventasFormateadas.length() == 0) {
             ventasFormateadas.append("No hay ventas para la semana seleccionada.");
+            putText( "No hay ventas para la semana seleccionada.", 10f, yPosition);
         }
 
         txtSemana.setText(ventasFormateadas.toString());
@@ -249,6 +422,7 @@ public class VerVentas extends Activity {
         // Mostrar las ventas del mes seleccionado en el TextView
         if (ventasFormateadas.length() == 0) {
             ventasFormateadas.append("No hay ventas para el mes seleccionado.");
+            putText( "No hay ventas para el mes seleccionado.", 10f, yPosition);
         }
         txtMes.setText(ventasFormateadas.toString());
 
@@ -265,8 +439,10 @@ public class VerVentas extends Activity {
         // Mostrar el producto más vendido en el TextView específico
         if (productoMasVendido != null) {
             txtArticuloMasVendidoDelMes.setText("Artículo más vendido del mes: " + productoMasVendido + " (Cantidad: " + maxCantidad + ")");
+            putText( "Artículo más vendido del mes: " + productoMasVendido + " (Cantidad: " + maxCantidad + ")", 10f, yPosition);
         } else {
             txtArticuloMasVendidoDelMes.setText("No se vendieron artículos este mes.");
+            putText( "Artículo más vendido del mes: " + productoMasVendido + " (Cantidad: " + maxCantidad + ")", 10f, yPosition);
         }
     }
 
@@ -282,7 +458,14 @@ public class VerVentas extends Activity {
         ventasFormateadas.append("Total con IVA: $").append(total).append("\n");
         ventasFormateadas.append("Productos:\n");
 
+        putText( "Fecha: " + fecha, 10f, yPosition);
+        putText( "Total con IVA: $" + total, 10f, yPosition);
+        putText( "Productos: ", 10f, yPosition);
+
         // Recorrer el array de productos
+        String[][] data = new String[productos.length() + 1][3];
+        data[0][0] = "Nombre"; data[0][1] = "Cantidad"; data[0][2] = "Precio";
+
         for (int j = 0; j < productos.length(); j++) {
             JSONObject producto = productos.getJSONObject(j);
             String nombre = producto.getString("nombre");
@@ -293,7 +476,14 @@ public class VerVentas extends Activity {
             ventasFormateadas.append("  - Nombre: ").append(nombre)
                     .append(", Cantidad: ").append(cantidad)
                     .append(", Precio: $").append(precio).append("\n");
+
+            data[j+1][0] = nombre;
+            data[j+1][1] = String.valueOf(cantidad);
+            data[j+1][2] = String.valueOf(precio);
+
         }
+
+        drawTable( data, 10f, yPosition, 120f, 20f);
 
         // Separador entre ventas
         ventasFormateadas.append("\n----------------------\n");
