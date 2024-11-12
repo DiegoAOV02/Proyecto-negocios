@@ -3,14 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".Vender">
 
     <!-- Titulo -->
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Ventas"
+        android:textColor="@color/black"
+        android:textAlignment="center"
         android:textSize="24sp"
+        android:background="@color/celeste"
         android:layout_gravity="center"
         android:padding="12dp" />
 
@@ -26,13 +30,17 @@
             android:layout_width="271dp"
             android:layout_height="wrap_content"
             android:hint="Buscar producto"
+            android:textColorHint="@color/black"
+            android:textColor="@color/black"
             android:inputType="text" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btnAgregarProducto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Agregar" />
+            android:src="@drawable/add"
+            android:backgroundTint="@color/celeste"
+            android:textColor="@android:color/black"/>
     </LinearLayout>
 
     <!-- Seleccionar Fecha -->
@@ -46,13 +54,16 @@
             android:id="@+id/btnSeleccionarFecha"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Seleccionar Fecha" />
+            android:text="Seleccionar Fecha"
+            android:backgroundTint="@color/celeste"
+            android:textColor="@android:color/black"/>
 
         <TextView
             android:id="@+id/txtFechaSeleccionada"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:textColor="@color/black"
             android:text="Fecha no seleccionada" />
     </LinearLayout>
 
@@ -73,6 +84,7 @@
                 android:layout_weight="1"
                 android:text="Producto"
                 android:textStyle="bold"
+                android:textColor="@color/black"
                 android:textSize="18sp" />
 
             <TextView
@@ -81,6 +93,7 @@
                 android:layout_weight="1"
                 android:text="Precio Unitario"
                 android:textStyle="bold"
+                android:textColor="@color/black"
                 android:textSize="18sp" />
 
             <TextView
@@ -88,6 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Cantidad"
+                android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textSize="18sp" />
 
@@ -96,6 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Precio Total"
+                android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textSize="18sp" />
         </TableRow>
@@ -114,6 +129,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="IVA (16%):"
+            android:textColor="@color/black"
             android:textStyle="bold"
             android:textSize="18sp"
             android:layout_weight="1" />
@@ -123,6 +139,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="$0.00"
+            android:textColor="@color/black"
             android:textSize="18sp" />
     </LinearLayout>
 
@@ -138,6 +155,7 @@
             android:layout_height="wrap_content"
             android:text="Total Final:"
             android:textStyle="bold"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:layout_weight="1" />
 
@@ -146,6 +164,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="$0.00"
+            android:textColor="@color/black"
             android:textSize="18sp" />
     </LinearLayout>
 
@@ -212,7 +231,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:text="Volver" />
+            android:text="Volver"
+            android:backgroundTint="@color/celeste"
+            android:textColor="@android:color/black"/>
 
         <Button
             android:id="@+id/btnVender"
@@ -220,6 +241,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Vender"
-            android:enabled="true" />
+            android:enabled="true"
+            android:backgroundTint="@color/celeste"
+            android:textColor="@android:color/black"/>
     </LinearLayout>
 </LinearLayout>

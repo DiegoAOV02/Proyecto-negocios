@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="0dp"
+    android:background="@color/white"
     tools:context=".Inventario">
 
     <!-- Título -->
@@ -13,12 +14,16 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#6A4A86"
+        android:background="@color/celeste"
         android:gravity="center"
-        android:padding="16dp"
-        android:text="Papelería los Inges"
-        android:textColor="@android:color/white"
-        android:textSize="24sp" />
+        android:padding="30sp"
+        android:textStyle="bold"
+        android:text="Papeleria los Inges"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Botones -->
     <LinearLayout
@@ -34,18 +39,18 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:backgroundTint="#6A4A86"
             android:text="Volver"
-            android:textColor="@android:color/white" />
+            android:backgroundTint="@color/celeste"
+            android:textColor="@android:color/black" />
 
         <Button
             android:id="@+id/btn_agregar_producto"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:backgroundTint="#6A4A86"
+            android:backgroundTint="@color/celeste"
             android:text="Agregar Producto"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/black" />
     </LinearLayout>
 
     <!-- Encabezados de la tabla fijos -->
@@ -71,6 +76,7 @@
                     android:gravity="start"
                     android:padding="4dp"
                     android:text="Nombre"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <TextView
@@ -80,6 +86,7 @@
                     android:gravity="start"
                     android:padding="4dp"
                     android:text="Descripción"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <TextView
@@ -89,6 +96,7 @@
                     android:gravity="start"
                     android:padding="4dp"
                     android:text="Precio"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <TextView
@@ -98,6 +106,7 @@
                     android:gravity="start"
                     android:padding="4dp"
                     android:text="Acciones"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
             </TableRow>
         </TableLayout>
@@ -132,6 +141,7 @@
                         android:layout_weight="1"
                         android:gravity="start"
                         android:padding="4dp"
+                        android:textColor="@color/black"
                         android:text="Memoria ram"
                         android:maxLines="2" />
 
@@ -142,6 +152,7 @@
                         android:gravity="start"
                         android:padding="4dp"
                         android:maxLines="3"
+                        android:textColor="@color/black"
                         android:text="Memoria ram DDR3" />
 
                     <TextView
@@ -150,6 +161,7 @@
                         android:layout_weight="1"
                         android:gravity="start"
                         android:padding="4dp"
+                        android:textColor="@color/black"
                         android:text="$10.00" />
 
                     <!--                    <TextView-->
@@ -160,22 +172,22 @@
                     <!--                        android:padding="4dp"-->
                     <!--                        android:text="Acciones" />-->
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btn_editar"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:backgroundTint="#6A4A86"
-                        android:text="Editar"
+                        android:backgroundTint="@color/celeste"
+                        android:src="@drawable/playlist_edit"
                         android:textColor="@android:color/white" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btn_eliminar"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:backgroundTint="#6A4A86"
-                        android:text="Eliminar"
+                        android:backgroundTint="@color/celeste"
+                        android:src="@drawable/delete"
                         android:textColor="@android:color/white"/>
                 </TableRow>
 

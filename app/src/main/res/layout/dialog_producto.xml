@@ -10,12 +10,16 @@
         android:id="@+id/edit_producto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/black"
+        android:textColor="@color/black"
         android:hint="Producto" />
 
     <EditText
         android:id="@+id/edit_descripcion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/black"
+        android:textColor="@color/black"
         android:hint="Descripción" />
 
     <EditText
@@ -23,6 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Precio"
+        android:textColorHint="@color/black"
+        android:textColor="@color/black"
         android:inputType="numberDecimal" />
 
     <!-- Botones dentro del diálogo -->
@@ -31,8 +37,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Guardar cambios"
-        android:backgroundTint="#6A4A86"
-        android:textColor="@android:color/white"
+        android:backgroundTint="@color/celeste"
+        android:textColor="@android:color/black"
         android:layout_marginTop="20dp" />
 
     <Button
@@ -40,7 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Salir"
-        android:backgroundTint="#6A4A86"
-        android:textColor="@android:color/white"
+        android:backgroundTint="@color/celeste"
+        android:textColor="@android:color/black"
         android:layout_marginTop="10dp" />
 </LinearLayout>

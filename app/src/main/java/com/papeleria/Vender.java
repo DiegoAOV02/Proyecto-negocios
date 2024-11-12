@@ -26,7 +26,8 @@ import java.util.Locale;
 
 public class Vender extends Activity {
 
-    private Button btnAgregarProducto, btnSeleccionarFecha, btnVender, btnVolver;
+    private ImageButton btnAgregarProducto;
+    private Button btnSeleccionarFecha, btnVender, btnVolver;
     private TextView txtFechaSeleccionada, txtIva, txtCambio, txtTotalFinal;
     private TableLayout tablaProductosVendidos;
     private AutoCompleteTextView editBuscarProducto;
@@ -154,23 +155,28 @@ public class Vender extends Activity {
         TableRow row = new TableRow(this);
         TextView nombreTextView = new TextView(this);
         nombreTextView.setText(nombreProducto);
+        nombreTextView.setTextColor(Color.BLACK);
         nombreTextView.setLayoutParams(new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1));
         row.addView(nombreTextView);
 
         TextView precioTextView = new TextView(this);
         precioTextView.setText(NumberFormat.getCurrencyInstance().format(precioUnitario));
         precioTextView.setLayoutParams(new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1));
+        precioTextView.setTextColor(Color.BLACK);
         row.addView(precioTextView);
 
         EditText cantidadEditText = new EditText(this);
         cantidadEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
         cantidadEditText.setText("1");
+        cantidadEditText.setTextColor(Color.BLACK);
+        cantidadEditText.setHintTextColor(Color.BLACK);
         cantidadEditText.setLayoutParams(new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1));
         row.addView(cantidadEditText);
 
         TextView totalTextView = new TextView(this);
         totalTextView.setLayoutParams(new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1));
         totalTextView.setText(NumberFormat.getCurrencyInstance().format(precioUnitario));
+        totalTextView.setTextColor(Color.BLACK);
         row.addView(totalTextView);
 
         cantidadEditText.addTextChangedListener(new TextWatcher() {

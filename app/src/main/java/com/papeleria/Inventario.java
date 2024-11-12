@@ -148,21 +148,17 @@ public class Inventario extends Activity {
                 precio.setText(formatoActual.format(precioProducto));
 
                 // Botón Editar
-                Button btn_editar = new Button(this);
-                btn_editar.setText("Editar");
+                ImageButton btn_editar = new ImageButton(this);
                 btn_editar.setLayoutParams(new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1));
-                btn_editar.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#6A4A86")));
-                btn_editar.setTextColor(Color.WHITE);
-                btn_editar.setTextSize(8);
+                btn_editar.setImageResource(R.drawable.playlist_edit);
+                btn_editar.setBackgroundColor(ContextCompat.getColor(this, R.color.celeste));
                 btn_editar.setOnClickListener(v -> showEditarProductoDialog(idProducto, nombreProducto, descripcionProducto, precioProducto));
 
                 // Botón Eliminar
-                Button btn_eliminar = new Button(this);
-                btn_eliminar.setText("Eliminar");
+                ImageButton btn_eliminar = new ImageButton(this);
                 btn_eliminar.setLayoutParams(new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1));
-                btn_eliminar.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#C7253E")));
-                btn_eliminar.setTextColor(Color.WHITE);
-                btn_eliminar.setTextSize(8);
+                btn_eliminar.setImageResource(R.drawable.delete);
+                btn_eliminar.setBackgroundColor(ContextCompat.getColor(this, R.color.celeste));
                 btn_eliminar.setOnClickListener(v -> eliminarProducto(idProducto));
 
                 row.addView(nombre);
