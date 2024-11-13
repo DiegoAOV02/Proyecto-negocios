@@ -43,7 +43,6 @@ public class VerVentas extends Activity {
     Canvas canvas;
     PdfDocument pdfDocument;
     PdfDocument.Page page;
-    String finalesDia = "", finalesSemana = "", finalesMes = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -274,17 +273,23 @@ public class VerVentas extends Activity {
                 // Extraer la información de la venta
                 String fecha = venta.getString("fecha");
                 double total = venta.getDouble("total");
+                double dineroRecibido = venta.optDouble("dineroRecibido", 0);
+                double cambio = venta.optDouble("cambio", 0);
                 JSONArray productos = venta.getJSONArray("productos");
 
                 // Verificar si la fecha de la venta coincide con la fecha seleccionada
                 if (fecha.equals(fechaSeleccionada)) {
                     ventasFormateadas.append("Fecha: ").append(fecha).append("\n")
                             .append("Total con IVA: $").append(total).append("\n")
+                            .append("Dinero Recibido: $").append(dineroRecibido).append("\n")
+                            .append("Cambio: $").append(cambio).append("\n")
                             .append("Productos:\n");
 
-                    putText( "Fecha: " + fecha, 10f, yPosition);
-                    putText( "Total con IVA: $" + total, 10f, yPosition);
-                    putText( "Productos:", 10f, yPosition);
+                    putText("Fecha: " + fecha, 10f, yPosition);
+                    putText("Total con IVA: $" + total, 10f, yPosition);
+                    putText("Dinero Recibido: $" + dineroRecibido, 10f, yPosition);
+                    putText("Cambio: $" + cambio, 10f, yPosition);
+                    putText("Productos:", 10f, yPosition);
 
                     String[][] data = new String[productos.length() + 1][3];
                     data[0][0] = "Nombre"; data[0][1] = "Cantidad"; data[0][2] = "Precio";
@@ -451,16 +456,27 @@ public class VerVentas extends Activity {
         // Extraer la información de la venta
         String fecha = venta.getString("fecha");
         double total = venta.getDouble("total");
+        double dineroRecibido = venta.optDouble("dineroRecibido", 0); // Usa optDouble para manejar valores faltantes
+        double cambio = venta.optDouble("cambio", 0); // Usa opt
+
+        // Redondear el cambio a dos decimales
+        cambio = Math.round(cambio * 100.0) / 100.0;
+
         JSONArray productos = venta.getJSONArray("productos");
 
         // Formatear la información de la venta
         ventasFormateadas.append("Fecha: ").append(fecha).append("\n");
         ventasFormateadas.append("Total con IVA: $").append(total).append("\n");
+        ventasFormateadas.append("Dinero Recibido: $").append(dineroRecibido).append("\n");
+        ventasFormateadas.append("Cambio: $").append(String.format(Locale.getDefault(), "%.2f", cambio)).append("\n");
         ventasFormateadas.append("Productos:\n");
 
-        putText( "Fecha: " + fecha, 10f, yPosition);
-        putText( "Total con IVA: $" + total, 10f, yPosition);
-        putText( "Productos: ", 10f, yPosition);
+        // Añadir los mismos valores en el PDF
+        putText("Fecha: " + fecha, 10f, yPosition);
+        putText("Total con IVA: $" + total, 10f, yPosition);
+        putText("Dinero Recibido: $" + dineroRecibido, 10f, yPosition);
+        putText("Cambio: $" + String.format(Locale.getDefault(), "%.2f", cambio), 10f, yPosition);
+        putText("Productos:", 10f, yPosition);
 
         // Recorrer el array de productos
         String[][] data = new String[productos.length() + 1][3];

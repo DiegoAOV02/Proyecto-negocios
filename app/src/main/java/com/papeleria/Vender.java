@@ -108,7 +108,7 @@ public class Vender extends Activity {
 
     private void configurarAutoCompleteProducto() {
         // Cargar los productos desde el archivo JSON
-        JSONArray productosJsonArray = JsonHelper.cargarProductos(this);
+        JSONArray productosJsonArray = JsonHelper.cargarProductos(this); // Lee el método cargarProductos de la clase JsonHelper
         ArrayList<String> listaProductos = new ArrayList<>();
 
         // Extraer los nombres de los productos del JSON
@@ -226,6 +226,8 @@ public class Vender extends Activity {
             // Calcular el cambio
             cambio = dineroRecibido - totalFinal;
 
+            cambio = Math.round(cambio * 100.0) / 100.0; // Redondeo a dos decimales
+
             // Crear un objeto JSON para la venta
             JSONObject venta = new JSONObject();
             venta.put("fecha", fecha);
@@ -251,7 +253,7 @@ public class Vender extends Activity {
             venta.put("productos", productosVendidos);
 
             // Guardar la venta en JSON
-            JSONArray ventas = JsonHelper.cargarVentas(this);
+            JSONArray ventas = JsonHelper.cargarVentas(this); // Carga el método correspondiente de la clase JsonHelper
             ventas.put(venta);
             JsonHelper.guardarVentas(this, ventas);
 
@@ -308,6 +310,9 @@ public class Vender extends Activity {
 
             // Calcular el cambio
             double cambio = dineroRecibido - totalFinal;
+
+            // Redondear el cambio a dos decimales
+            cambio = Math.round(cambio * 100.0) / 100.0;
 
             // Verificar si el cambio es negativo
             if (cambio < 0) {
